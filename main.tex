@@ -1,0 +1,74 @@
+%
+% Parameters
+%
+
+\ifdefined\fullversion
+\else
+\def\fullversion{1}    % 0 = conference version; 1 = full version
+\fi
+
+\ifdefined\cameraversion
+\else
+\def\cameraversion{0}    % 0 = long version; 1 = proceedings version
+\fi
+
+\def\showoverflow{1}   % 1 = show overflows
+\def\allow{1}      % 0 = remove todo command
+\def\anonymous{0}      % 1 = anonymous
+
+%
+% Document class 
+%
+
+\documentclass[envcountsame,runningheads,notitlepage]{llncs}
+\ifnum\fullversion=1
+\usepackage[a4paper, margin=1.1in]{geometry}
+\setlength{\marginparwidth}{2.5cm}
+\fi
+
+%
+% Custom header
+%
+
+\input{tex_files/ZZ_header}
+
+\title{A Survey of SNARKs in Decentralized Finance Systems}
+\titlerunning{A Survey of SNARKs in Decentralized Finance Systems}
+\date{05/28/2024}
+
+\ifnum\anonymous=0
+\author{
+  Isaac Thomas\inst{1}
+}% Add author name here
+
+\institute{Computer Science \& Engineering, UC San Diego\\
+  \href{mailto:isthomas@ucsd.edu}{isthomas@ucsd.edu}
+}  % Add institute here
+
+\else
+\author{Isaac Thomas} 
+\institute{University of California, San Diego}
+\fi
+
+\begin{document}
+  \maketitle
+
+\begin{abstract}
+Succinct non-interactive arguments of knowledge (SNARKs) have seen increasing adoption in decentralized finance (DeFi) systems, where scalability and privacy preservation are of high concern in verifying computation performed on blockchain networks. In particular, SNARKs using pairing-based cryptography are widely used in blockchain infrastructure/applications due to their small proof sizes, fast verification, and easily endowed zero-knowledge properties. In this survey, we review advancements in pairing-based SNARKs relevant to the performance, flexibility and confidentiality of blockchain networks and their hosted applications. Along with fundamental SNARK properties and early work, we discuss alternate characterizations of the complexity class NP, cryptographic primitives, and optimizations modern pairing-based SNARKs collectively employ to verify payments and execution paths through on-chain programs; and we weigh concrete security/performance/privacy tradeoffs emerging from such design choices. Finally, we discuss applications and future SNARK research avenues relevant to verifying on-chain computation.
+\end{abstract}
+
+\input{tex_files/prelims}
+\input{tex_files/pairing-snarks-nu}
+\input{tex_files/pairing-snarks-u}
+\input{tex_files/applications}
+\input{tex_files/future}
+
+\newpage
+\ifnum\fullversion=0
+  \bibliographystyle{splncs03}
+ \else
+   \bibliographystyle{alpha-short}
+ \fi
+\bibliography{cryptobib/abbrev3,cryptobib/crypto,add}
+
+\end{document} 

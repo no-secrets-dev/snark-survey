@@ -1,0 +1,19 @@
+\section{Future Research}
+
+\subsection{Proof aggregation \& Distributed Proving}
+\noindent As one would expect, proof generation remains the performance bottleneck in most SNARKs (pairing-based or not). In a world where computational resources are quite asymmetrically distributed (DeFi being no exception), it would be sensible to be able to outsource more intensive computations within the same proof to another party; naturally they would include a proof that such computation was done correctly. \textbf{Is there any work on this right now}. A similar idea emerges when we consider distributed proving of a statement by segmenting the \textit{statement} instead of the \textit{proof components}. Each delegated prover would then have to prove that a given subcircuit has an assignment which produces some desired value, then all of these proofs would get aggregated along with a proof that the aggregation was performed correctly.\\
+
+\subsection{Standardized benchmarks for pairing-based methods (and others)}
+\noindent Current SNARK benchmarks lack standardization by the computation being verified.\\
+
+\subsection{Integration of optimizations to pairing-based cryptography}
+\noindent optimize miller function\\
+
+\subsection{Formal verification of pairing-based systems}
+\noindent maybe\\
+
+\subsection{Post-quantum pairing-based SNARKs (how?)}
+\noindent Could be done using pairings for isogeny-based cryptography?\\
+
+\subsection{Extending pairings to higher-degree operations}
+\noindent nothing\\

@@ -1,0 +1,69 @@
+\section{Circuit-specific pairing-based SNARKs}
+\noindent The seminal PCP theorem yielded a powerful characterization of NP as the set of languages with polynomial-time PCP verifiers. However, early work on pairing-based SNARKs was actually motivated by the possibility of succinct arguments of knowledge using a representation \textit{more suitable than PCPs} for integration with cryptographic primitives. Several other works came close to meeting this end but could not attain sublinear proof size.\\
+
+\noindent To this end, Gennaro et al. \cite{snarknopcp} coined quadratic span programs (QSP) and quadratic arithmetic programs (QAP) as a way of representing boolean/arithmetic circuit-SAT with polynomials, along with succinct NIZK for both QSP-SAT and QAP-SAT. Although the QSP construction is noteworthy, we limit discussion to their QAP-related construction due to the easier connection to arithmetic circuits and polynomials. We recall the strong QAP form here:
+\begin{align}
+\underbrace{\left(\sum_{j=1}^n a_i v_i(x)\right)}_{\text{left inputs}} \cdot \underbrace{\left(\sum_{j=1}^n b_i w_i(x)\right)}_{\text{right inputs}} - \underbrace{\left(\sum_{j=1}^n c_i y_i(x)\right)}_{\text{outputs}} = h(x) t(x) \equiv 0 \mod t(x)
+\end{align}
+
+\noindent The idea was to leverage the notion of some additively homomorphic encoding $E$ -- namely, an injective, additively homomorphic function for which inversion is difficult -- to compile a QSP/QAP instance into a proof containing just 9 group elements (non-ZK). We detail the non-zero-knowledge version here for clarity. Denote $E(x)$ by $[x]$. The prover $\mathcal{P}$ solves for $h(x)$ and sends
+
+\begin{align}
+    \pi = \Big(&[v_{mid}(s)], [w(s)], [y(s)], [h(s)], \\ 
+    &[\alpha v_{mid}(s)], [\alpha w(s)], [\alpha y(s)], [\alpha h(s)], \\ 
+    &[\beta_v v_{mid}(s) + \beta_w w(s) + \beta_y y(s)]\Big)
+\end{align}
+
+where $\alpha, s, \beta_v, \beta_w, \beta_y \in \mathbb{F}_p, $ are secret random preprocessing elements; $v_{mid}(s), w(s), y(s)$ are the witness-weighted combinations of the wiring polynomials in the QAP; and $h(s)$ is the evaluation of the quotient polynomial an honest prover would know. In particular, $v_{mid}(x) = \sum_{k \in \mathcal{I}_{mid}} a_k v_k(x)$ where $\mathcal{I}_{mid}$ are the indices corresponding to private circuit inputs. The verifier in turn checks 5 equations using the additive properties of $E$. In particular, the verifier receives the following proof $\pi'$ \textit{which it does not yet know is valid}, hence the new notation of elements reminiscent of those in $\pi$:
+\begin{align}
+\pi' = (\pi_{v_{mid}}, \pi_{w}, \pi_{y}, \pi_{h}, \pi_{v'_{mid}}, \pi_{w'}, \pi_{y'}, \pi_{h'}, \pi_{z'})
+\end{align}
+
+and checks 6 equations; the first one checks the QAP relation, and the rest essentially compare proof elements with themselves, but recomposed in a way that tests if the prover knows the unhidden QAP elements:
+\begin{align}
+(v_0(s) + v_{in}(s) + \pi_{v_{mid}})(w_0(s) + \pi_w) - (y_o + \pi_{y}) - \pi_h t(s) &= 0 \\
+\alpha v_{mid}(s) - v'_{mid}(s) &= 0 \\
+\alpha w(s) - w'(s) &= 0 \\
+\alpha y(s) - y'(s) &= 0 \\
+\alpha h(s) - h'(s) &= 0 \\
+z'(s) - \gamma \beta_v v_{mid}(s) - \gamma \beta_w w(s) - \gamma \beta_y y(s) &= 0
+\end{align}
+where $v'_{mid}(s)$ is encoded in $\pi_{v'_{mid}}$, $w'(s)$ is encoded in $\pi_{w'}$, and so on. This is done ``in the exponent'' using pairings, but we provide the unhidden equations for clarity.\\
+
+\noindent GGPR uses a \textit{strong} QAP for their scheme, which uses a different set of coefficients for each sum in the QAP equation. This mandates a \textit{strengthening step} in which extra constraints between the coefficient sets are materialized, tripling prover work and preprocessing size. Parno et al. \cite{pinocchio} made the simple optimization of using a \textit{regular} QAP, which uses the same set of coefficients for each sum in the QAP expression. We recall the regular QAP form:
+\begin{align}
+\underbrace{\left(\sum_{j=1}^n a_i v_i(x)\right)}_{\text{left inputs}} \cdot \underbrace{\left(\sum_{j=1}^n a_i w_i(x)\right)}_{\text{right inputs}} - \underbrace{\left(\sum_{j=1}^n a_i y_i(x)\right)}_{\text{outputs}} = h(x) t(x) \equiv 0 \mod t(x)
+\end{align}
+\noindent The use of the same $a_i$ across all sums eliminated the need for the strengthening step without any noteworthy compromises, although it required modifications to proof elements and verification checks that ensure consistent use of coefficients in QAP terms. The resulting proof sent by the prover looks slightly different. Consider the following preprocessing elements (among others):
+\begin{align}
+r_v, r_w, s, \alpha_v, \alpha_w, \alpha_y, \beta, \gamma &\overset{R}\leftarrow \mathbb{F} \\
+r_y &= r_v r_w \\
+g_v &= r_v G \\
+g_w &= r_w G \\
+g_y &= r_y G
+\end{align}
+
+\noindent The prover $\mathcal{P}$ would send 
+\begin{align}
+    \pi_2 = \Big(&[v_{mid}(s)], [w_{mid}(s)], [y_{mid}(s)], [h(s)], \\
+    [&\alpha_v v_{mid}(s)], [\alpha_w w_{mid}(s)], [\alpha_y y_{mid}(s)], \\
+    [&\beta_v v_{mid}(s) + \beta_w w_{mid}(s) + \beta_y y_{mid}(s)]\Big)
+\end{align}
+
+\noindent where like before, $v_{mid}(x) = \sum_{k \in \mathcal{I}_{mid}} a_k v_k(x)$ and likewise for $w_{mid}(x)$, $y_{mid}(x)$. Similar to GGPR, the verifier receives
+$$
+\textbf{THE POTENTIALLY VALID PROOF THE VERIIFER RECEIVES}
+$$
+and checks the following pairing-based equations:
+\begin{align}
+e([v_0(s) + v_{in}(s) + v_{mid}(s)]_1 \cdot [w_0(s) + w_{in}(s) + w_{mid}(s)]_1, G_2) = \\
+([t(s)]_1, [h(s)]_2) \cdot e([y_0(s) + y_{in}(s) + y_{mid}(s)]_1, G_2) \\
+e([r_v v'_{mid}(s)], G) = e([v_{mid}(s)], [r_v \alpha]) \\
+e([r_w w'_{mid}(s)], G) = e([w_{mid}(s)], [r_w \alpha]) \\
+e([r_y y'_{mid}(s)], G) = e([y_{mid}(s)], [r_y \alpha]) \\
+e(z'(s), [\gamma]) = e([r_v v_{mid}(s) + r_w w_{mid}(s) + r_y y_{mid}(s)], [\beta \gamma])
+\end{align}
+
+\noindent Imaginably, this form of QAP became a precedent for later work. In particular, Groth used regular QAPs and stronger knowledge assumptions to produce a SNARK with proofs containing just three elliptic curve group elements while preserving succinct verification. The improvements here were largely due to more aggressive compilation of QAP polynomial elements into single setup terms, which decreased setup size and proof size at the expense of needing stronger assumptions about what witness information the prover knows.\\
+
+\noindent While some would regard them as extreme, these stronger knowledge assumptions are not necessarily uncalled for; SNARKs for NP cannot exist without non-falsifiable assumptions to begin with, and reduction in proof length could also be regarded as "worth it" on this front. Consequently, Groth's work (colloquially known as groth16) saw large adoption in blockchain systems verifying homogeneous computation; applications like Tornado Cash and Railgun use this method to verify withdrawals from privacy-preserving pools, for instance.
