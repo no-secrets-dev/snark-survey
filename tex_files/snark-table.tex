@@ -1,0 +1,17 @@
+\begin{table}[H]
+\caption{Comparison of Pairing-based SNARK Systems}
+\begin{tabular}{|l|l|l|l|l|c|c|l|}
+\hline
+\toprule
+method & SRS size & prover-runtime & proof-length & verifier-runtime & universal & updatable & security-model \\ \hline\toprule
+\midrule
+GGPR & $O(n)$ & $O(n \log n)$ & 9 group elements & $O(n)$ & No & No & CRS, q-PKE, q-PDH \\ \hline
+Pinocchio & $O(n)$ & $O(n \log n)$ & 8 group elements & $O(n)$ & No & No & CRS \\ \hline
+Groth16 & $O(n)$ & $O(n \log n)$ & 3 group elements & $O(1)$ & No & No & CRS, q-type \\ \hline
+Groth-Updatable & $O(n^2)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS \\ \hline
+Sonic & $O(n)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS \\ \hline
+PlonK & $O(n)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS \\ \hline
+Marlin & $O(n)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS, AGM \\ \hline\bottomrule
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,4 +1,27 @@
 \section{Preliminaries}
+
+\subsection{What is a SNARK?}
+\noindent Loosely speaking, a succinct non-interactive argument of knowledge is a short, one-shot proof that one $knows$ some ``witness'' or value $w$ satisfying a claim $C$ related to public input(s) $x$. In practice, $C$ is a claim that $x \in L$, where $L \in \text{NP}$. We give a more formal definition below.\\
+
+\subsubsection{A more formal definition}
+\noindent Let the relation $\mathcal{R} = \{(x, w)\} \subseteq \{0, 1\}^{*} \times \{0, 1\}^{*}$ be decidable in deterministic polynomial time, where $|w| = \mathsf{poly}(|x|)\ \forall (x, w) \in \mathcal{R}$. Let $\lambda \in \mathbb{N}$ denote a security parameter. Define the language $L = \{x\ |\ \exists w\ \text{s.t.}\ (x, w) \in \mathcal{R}\}$. A succinct non-interactive argument of knowledge is the tuple of PPT algorithms $(\sf{Setup}, \sf{Prove}, \sf{Verify})$ where:
+\begin{itemize}
+    \item $\sf{Setup}(1^{\lambda}, \mathcal{R}) \rightarrow \sigma$ receives an input security parameter and relation, and outputs a common reference string (CRS) $\sigma$ containing the ``setup'' terms the prover and verifier will use to construct/verify proofs
+    \item $\sf{Prove}(\sigma, x, w) \rightarrow \pi$ receives the CRS, string $x$, and witness $w$ and outputs a proof $\pi$
+    \item $\sf{Verify}(\sigma, x, \pi) \rightarrow \{0, 1\}$ receives the CRS, string $x$, and proof $\pi$; it outputs 1 (accepts) or 0 (rejects)
+\end{itemize}
+
+\noindent and $\sf{Setup}, \sf{Prove}, \sf{Verify}$ have the following properties:
+\begin{itemize}
+    \item \textbf{completeness:} If $\pi \leftarrow \sf{Prove}(\sigma, x, w)$ and $(x, w) \in \mathcal{R}$ then $\sf{Verify}$ outputs 1 
+    \item \textbf{soundness:} For all possible PPT algorithms $\sf{Prove'}$, if $\pi' \leftarrow \sf{Prove'}(\sigma, x, w)$ and $x \notin L$, then $\sf{Verify}(\sigma, x, \pi') = 1$ with probability at most $\delta_s$ ($\mathcal{V}$ rejects with probability at least $1 - \delta_s$). 
+    \item \textbf{knowledge soundness:} For all possible PPT algorithms $\sf{Prove'}$, if $\pi' \leftarrow \sf{Prove'}(\sigma, x)$ and $\sf{Verify}(\sigma, x, \pi') = 1$ with non-negligible probability, then there exists a PPT extractor $\mathcal{E}$ which, given access to the same inputs as $\sf{Prove}$ and $\mathcal{P}$'s random tape, outputs $w$ s.t. $(x, w) \in \mathcal{R}$. 
+    \item \textbf{succinctness:} Let $(x, w) \in \mathcal{R}$ and $\pi \leftarrow \sf{Prove}(\sigma, x, w)$. $|\pi|$ is polylogarithmic in $|x|$, prover complexity is quasilinear in $|x|$, and verifier complexity is polylogarithmic in $|x|$. Setup complexity is quasilinear in $|x|$. 
+    \item \textbf{non-interactivity:} $\pi$ is generated without any interaction between $\mathcal{P}$ and $\mathcal{V}$ after setup.
+\end{itemize}
+
+\noindent As an example, $L$ could be the set of string encodings of satisfiable boolean circuits (there's some input out there making the circuit output `True`. The claim to be proven is that $x \in L$, where $x$ is the encoding of the circuit in question; since $L$ is fixed here, the claim can just be represented by $x$. Our witness $w$ is our potentially secret ``certificate'' proving the validity of the claim.\\
+
 \subsection{Early work}
 \noindent Succinct non-interactive arguments of knowledge are preceded by foundational work in complexity theory, probabilistic proofs, and cryptography. First and foremost was the formalization of interactive proofs by Goldwasser et al.\ \cite{ipfirst}, which established a theoretical framework by which a prover $\mathcal{P}$ exchanges a finite number of messages during \textit{interaction} with a verifier $\mathcal{V}$, which issues \textit{random challenges} to $\mathcal{P}$ in order to verify their claim. They also introduced the notion of zero-knowledge.\\ 
 
@@ -14,7 +37,7 @@ Modern SNARKs largely use the "workflow" depicted below to prove/verify computat
     \begin{tikzpicture}[
         node distance=1.5cm,
         box/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=0.8cm, text width=1.9cm, align=center, font=\footnotesize},
-        box-highlight/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=0.8cm, text width=1.9cm, align=center, draw=red!70, line width=1.2pt, fill=yellow!15, font=\footnotesize},
+        box-highlight/.style={rectangle, draw=red!70, line width=1.2pt, rounded corners, minimum width=2cm, minimum height=0.8cm, text width=1.9cm, align=center, font=\footnotesize},
         arrow/.style={->, >=latex},
         arrow-highlight/.style={->, >=latex, draw=red!70, line width=1.2pt}
     ]
@@ -117,7 +140,7 @@ is identically bounded. In other words, $g$ and $h$ will output different values
 
 \subsection{Pairing-Friendly Elliptic Curve Cryptography}
 
-\noindent Pairing-based cryptography, which allows one to check algebraic relationships between quantities ``in the exponent'' using bilinear functions on elliptic curve group elements, is a heavily used cryptographic primitive in modern SNARKs. Elliptic curve groups are preferred here due to small key sizes -- determined by the size of the base field the coordinates of the points from. There is also a natural group operation over elliptic curve points behaving like addition; when compounded with the hardness of computing discrete logarithms over elliptic curve groups, this yields a scheme for additively homomorphic encryption. Pairings can render this scheme \textit{doubly} homomorphic due to the properties of bilinear pairings. This paper abstracts the details of elliptic curve groups for brevity; we instead focus on the properties they exhibit which make them a useful component of pairing-based cryptography.\\
+\noindent Pairing-based cryptography, which allows one to check algebraic relationships between quantities ``in the exponent'' using bilinear functions on arbitrary source group elements (usually from elliptic curve groups), is a heavily used cryptographic primitive in modern SNARKs. Elliptic curve groups are preferred here due to small key sizes -- determined by the size of the base field the coordinates of the points from. There is also a natural group operation over elliptic curve points behaving like addition; when compounded with the hardness of computing discrete logarithms over elliptic curve groups, this yields a scheme for additively homomorphic encryption. Pairings can render this scheme \textit{doubly} homomorphic due to the properties of bilinear pairings. This paper abstracts the details of elliptic curve groups for brevity; we instead focus on the properties they exhibit which make them a useful component of pairing-based cryptography.\\
 
 \noindent More formally, suppose we have two cyclic elliptic curve groups $\mathbb{G}_1$ and $\mathbb{G}_2$ generated by elements $G_1$ and $G_2$, respectively. We denote the scalar multiple of a point $P \in \mathbb{G_1}$ by $kP$, which is just the same as $k$ additions of $P$ and $k \in \mathbb{F}_s$ where $\mathbb{F}_s$ is some scalar field. For a bilinear pairing $e: \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_t$ where $P_1 \in \mathbb{G}_1$ and $P_2 \in \mathbb{G}_2$, we have the following properties:
 \begin{itemize}
