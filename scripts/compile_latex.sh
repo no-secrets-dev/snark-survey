@@ -24,9 +24,9 @@ cd "$root_dir"
 
 eval "$(conda shell.bash hook)"
 
-conda activate web3-env
-python scripts/snarks_table.py
-conda deactivate
+# conda activate web3-env
+# python scripts/snarks_table.py
+# conda deactivate
 
 latexmk -pdf \
     -synctex=1 \

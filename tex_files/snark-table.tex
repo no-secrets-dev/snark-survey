@@ -1,17 +1,17 @@
 \begin{table}[H]
 \caption{Comparison of Pairing-based SNARK Systems}
-\begin{tabular}{|l|l|l|l|l|c|c|l|}
+\begin{tabular}{|l|l|l|p{3.2cm}|l|c|c|l|}
 \hline
 \toprule
-method & SRS size & prover-runtime & proof-length & verifier-runtime & universal & updatable & security-model \\ \hline\toprule
+method & SRS size & prover-time & proof-length & verifier-time & universal & updatable & assumptions \\ \hline\toprule
 \midrule
-GGPR & $O(n)$ & $O(n \log n)$ & 9 group elements & $O(n)$ & No & No & CRS, q-PKE, q-PDH \\ \hline
-Pinocchio & $O(n)$ & $O(n \log n)$ & 8 group elements & $O(n)$ & No & No & CRS \\ \hline
-Groth16 & $O(n)$ & $O(n \log n)$ & 3 group elements & $O(1)$ & No & No & CRS, q-type \\ \hline
-Groth-Updatable & $O(n^2)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS \\ \hline
-Sonic & $O(n)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS \\ \hline
-PlonK & $O(n)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS \\ \hline
-Marlin & $O(n)$ & $O(n \log n)$ & $O(1)$ & $O(1)$ & Yes & Yes & CRS, AGM \\ \hline\bottomrule
+GGPR13 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 1 \mathbb{F}$ & $O(n)$ & No & No & q-PKE, q-PDH \\ \hline
+PGHR13 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2$ & $O(n)$ & No & No & q-PDH \\ \hline
+Groth16 & $O(n)$ & $O(n \log n)$ & $2 \mathbb{G}_1 + 1 \mathbb{G}_2$ & $O(1)$ & No & No & q-type \\ \hline
+GMKL18 & $O(n^2)$ & $O(n \log n)$ & $O(1) \mathbb{G}_1 + O(1) \mathbb{G}_2 + O(1) \mathbb{F}$ & $O(1)$ & Yes & Yes & SXDH \\ \hline
+MBKM19 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$ & $O(1)$ & Yes & Yes & SXDH \\ \hline
+GWC19 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2$ & $O(1)$ & Yes & Yes & SXDH \\ \hline
+CHM+19 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 6 \mathbb{F}$ & $O(1)$ & Yes & Yes & AGM \\ \hline\bottomrule
 \bottomrule
 \end{tabular}
 \end{table}
