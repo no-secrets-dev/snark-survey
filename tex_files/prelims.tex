@@ -24,70 +24,68 @@
 s execution, while our statement (``the output of $P$ is $z$'') would be $(P, z)$. 
 
 \subsection{Early work}
-\noindent Though simple in principle, SNARKs are preceded by foundational work in complexity theory, probabilistic proofs, and cryptography. First was the formalization of interactive proofs by Goldwasser et al.\ \cite{ipfirst}, which established a theoretical framework by which a prover $\mathcal{P}$ exchanges a finite number of messages during \textit{interaction} with a verifier $\mathcal{V}$, which issues \textit{random challenges} to $\mathcal{P}$ in order to verify their claim. They also introduced the notion of zero-knowledge via which a proof system leaks no other information beyond the validity of the claim being verified. Arora et al. \cite{pcpthm1, pcpthm2} later drew the seminal equivalence between NP and PCP$[O(\log n), O(1)]$, yielding a powerful characterization of NP as the set of languages with verifiers needing logarithmic randomness bits and \textit{constant queries}, where $n$ is the statement size.\\
+\noindent SNARKs are preceded by foundational work in complexity theory, probabilistic proofs, and cryptography. First was the formalization of interactive proofs by Goldwasser et al.\ \cite{ipfirst}, which established a theoretical framework by which a prover $\mathcal{P}$ exchanges a finite number of messages during \textit{interaction} with a verifier $\mathcal{V}$, which issues \textit{random challenges} to $\mathcal{P}$ in order to verify their claim. They also introduced the notion of zero-knowledge via which a proof system leaks no other information beyond the validity of the claim being verified. Arora et al. \cite{pcpthm1, pcpthm2} later drew the seminal equivalence between NP and PCP$[O(\log n), O(1)]$, yielding a powerful characterization of NP as the set of languages with verifiers needing logarithmic randomness bits and \textit{constant queries}, where $n$ is the statement size. Given results showing all NP languages can have \textit{very} efficient verifiers, the following question naturally arises: ``short enough'' or \textit{succinct} arguments of knowledge exist for NP? Kilian's construction \cite{kilian} realized such a thing using merkle tree commitments to probabilistically checkable proofs (PCPs), and Micali later showed how to make his argument non-interactive \cite{micalisnark} using the Fiat-Shamir heuristic \cite{fiatshamir}. Despite these breakthroughs, SNARKs constructed from PCPs were undesirable due to massive overhead incurred in proof construction. Many approaches instead use algebraic characterizations of NP which admit means to efficient polynomial equality/divisibility testing. Additionally integrating ``compiled'' interaction and suitable cryptographic commitment schemes brings us closer to the practical SNARK schemes used in real-world blockchain systems.\\
 
-\noindent With these results in mind, simply sending the full ``certificate'' as a proof of some claim is impractical, as it is likely not space-efficient or privacy-preserving. This begs the following question: given results showing all NP languages can have \textit{very} efficient verifiers, do ``short enough'' or \textit{succinct} arguments of knowledge exist for NP? Kilian's construction \cite{kilian} found an affirmative answer to this inquiry (for verification at least) using merkle tree commitments to probabilistically checkable proofs (PCPs), and Micali later showed how to make this argument non-interactive \cite{micalisnark} using the Fiat-Shamir heuristic \cite{fiatshamir}. Despite these breakthroughs, SNARKs constructed from PCPs were undesirable due to massive overhead incurred in proof construction. Many approaches instead use algebraic characterizations of NP which admit means to efficient polynomial equality/divisibility testing. Additionally integrating ``compiled'' interaction and suitable cryptographic commitment schemes brings us closer to the practical SNARK schemes used in real-world blockchain systems.\\
-
-\noindent As seen in Kilian's work, along this path to practically succinct argument systems lies an interesting avenue: considering only computationally bounded adversaries. In doing so, one can now use cryptographic schemes to encrypt proof elements and verify their integrity. This can enable small proof sizes and fast verification while still making it infeasible to break soundness in polynomial time. Pairing-based cryptography, which allows one to check algebraic relationships between quantities ``in the exponent'' using bilinear functions (behaving like multiplication) on elliptic curve group elements, spurred a sequence of works leading to methods practical enough for real-world blockchain applications. Though faster, all of these methods require stronger security assumptions. In particular, pairing-based methods derive their security in part from the elliptic curve discrete log assumption, which is stronger than the collision resistance assumptions used in other hashing-based methods \cite{starks, ligero, hyrax, aurora}. Within and across denominations of SNARKs, such tradeoffs between performance, security, and flexibility are recurring points of comparison; and where they appear becomes clearer with a picture of which components are stitched together to form a SNARK.
+\noindent As seen in Kilian's work, along this path to practically succinct argument systems lies an interesting avenue: considering only computationally bounded adversaries. In doing so, one can now use cryptographic schemes to produce small encrypt proof elements and quickly verify their integrity, while ensuring the intractability of breaking soundness. Pairing-based cryptography, which allows one to check algebraic relationships between quantities ``in the exponent'' using bilinear functions (behaving like multiplication) on elliptic curve group elements, spurred a sequence of works leading to methods practical enough for real-world blockchain applications. Though faster, all of these methods require stronger security assumptions. In particular, pairing-based methods derive their security in part from the elliptic curve discrete log assumption, which is stronger than the collision resistance assumptions used in other hashing-based methods \cite{starks, ligero, hyrax, aurora}. Within and across denominations of SNARKs, such tradeoffs between performance, security, and flexibility are recurring points of comparison; and where they appear becomes clearer with a picture of which components are stitched together to form a SNARK.
 
 
 \subsection{A general ``workflow'' for SNARKs}
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}[
-        node distance=1.5cm,
-        box/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=0.8cm, text width=1.9cm, align=center, font=\footnotesize},
-        box-highlight/.style={rectangle, draw=red!70, line width=1.2pt, rounded corners, minimum width=2cm, minimum height=0.8cm, text width=1.9cm, align=center, font=\footnotesize},
-        arrow/.style={->, >=latex},
-        arrow-highlight/.style={->, >=latex, draw=red!70, line width=1.2pt}
+        node distance=0.8cm,
+        box/.style={rectangle, draw, rounded corners, minimum width=1.4cm, minimum height=0.6cm, text width=1.3cm, align=center, font=\tiny},
+        box-highlight/.style={rectangle, draw=red!70, line width=1pt, rounded corners, minimum width=1.4cm, minimum height=0.6cm, text width=1.3cm, align=center, font=\tiny},
+        arrow/.style={->, >=latex, font=\tiny},
+        arrow-highlight/.style={->, >=latex, draw=red!70, line width=1pt, font=\tiny}
     ]
-    
-    % Define nodes - first row
+
+    % Define nodes - first column
     \node[box-highlight] (comp) {computation};
-    
-    % Second row
-    \node[box-highlight] (circ) [below left=0.8cm and 0.3cm of comp] {circuit};
-    \node[box] (aet) [below right=0.8cm and 0.3cm of comp] {AET};
-    
-    % Third row
-    \node[box-highlight] (r1cs) [below left=0.8cm and 0cm of circ] {R1CS};
-    \node[box-highlight] (cust) [below right=0.8cm and 0cm of circ] {custom NP repr.};
-    \node[box] (air) [below=0.8cm of aet] {AIR};
-    
-    % Fourth row
-    \node[box-highlight] (polyid) [below right=0.8cm and 0.3cm of r1cs] {poly. EQ};
-    \node[box] (cw) [below right=0.8cm and 0.3cm of air] {poly. CW};
-    
-    % Fifth row
-    \node[box-highlight] (crypto) [below=0.8cm of polyid] {pairing-based CC};
-    \node[box] (crypto2) [below=0.8cm of cw] {hashing-based CC};
-    
-    % Sixth row
-    \node[box-highlight] (pair) [below=0.8cm of crypto] {PC};
-    \node[box] (prox) [below=0.8cm of crypto2] {PPT};
-    
-    % Define connections - with highlighting for the pairing-based path
+
+    % Second column
+    \node[box-highlight] (circ) [right=0.7cm of comp] {circuit};
+    \node[box] (aet) [below=0.5cm of circ] {AET};
+
+    % Third column
+    \node[box-highlight] (r1cs) [right=0.7cm of circ] {R1CS};
+    \node[box-highlight] (cust) [below=0.5cm of r1cs] {custom NP repr.};
+    \node[box] (air) [below=0.5cm of cust] {AIR};
+
+    % Fourth column
+    \node[box-highlight] (polyid) [right=0.7cm of r1cs] {PEQ};
+    \node[box] (cw) [below=1cm of polyid] {PCW};
+
+    % Fifth column
+    \node[box-highlight] (crypto) [right=0.7cm of polyid] {pairing-based CC};
+    \node[box] (crypto2) [below=1cm of crypto] {hashing-based CC};
+
+    % Sixth column
+    \node[box-highlight] (pair) [right=0.7cm of crypto] {PC};
+    \node[box] (prox) [below=1cm of pair] {PPT};
+
+    % Define connections
     \draw[arrow-highlight] (comp) -- (circ);
-    \draw[arrow] (comp) -- (aet);
-    
+    \draw[arrow] (comp) to[bend right=20] (aet);
+
     \draw[arrow-highlight] (circ) -- (r1cs);
     \draw[arrow-highlight] (circ) -- (cust);
     \draw[arrow] (aet) -- (air);
-    
+
     \draw[arrow-highlight] (r1cs) -- (polyid);
     \draw[arrow-highlight] (cust) -- (polyid);
     \draw[arrow] (air) -- (cw);
-    \draw[arrow] (cust) -- (cw);
-    \draw[arrow] (r1cs) -- (cw);
-    
+    \draw[arrow] (cust) to[bend right=15] (cw);
+    \draw[arrow] (r1cs) to[bend right=30] (cw);
+
     \draw[arrow-highlight] (polyid) -- (crypto);
     \draw[arrow] (cw) -- (crypto2);
-    
+
     \draw[arrow-highlight] (crypto) -- (pair);
     \draw[arrow] (crypto2) -- (prox);
-    
+
     \end{tikzpicture}
-    \caption{A general workflow describing how SNARKs convert computations into verifiable statements. The highlighted path shows the course pairing-based approaches take. Acronyms: AET = algebraic execution trace, AIR = algebraic intermediate representation, CC = cryptographic compilation, CW = codewordx, EQ = polynomial equality, PC = pairing check, PPT = polynomial proximity testing, R1CS = rank-1 constraint system.}
+    \caption{A general workflow describing how SNARKs reduce checking computation to checking polynomials. The highlighted path shows the course pairing-based approaches take. Acronyms: AET = algebraic execution trace, AIR = algebraic intermediate representation, CC = cryptographic compilation, PCW = polynomial codeword, PEQ = polynomial equality, PC = pairing check, PPT = polynomial proximity testing, R1CS = rank-1 constraint system.}
     \label{fig:snark-workflow}
 \end{figure}
 Modern SNARKs largely use the "workflow" depicted in figure \ref{fig:snark-workflow} to prove/verify computation. Here there are two courses; one reduces to checking polynomial relationships using pairing-based cryptography (left), and the other reduces to checking proximity to a Reed-Solomon code via combination of coding theoretic results and merkle trees. In an interactive setting, the "checks" or "testing" steps might involve randomized interaction with the verifier; but many interactive-proof-based methods use Fiat-Shamir to have the prover simulate such interaction, which the verifier can check. To balance coverage, depth, and accessibility, this paper focuses on approaches involving pairing-based cryptography (highlighted paths). We leave the surveying of methods using hashing-based cryptography as future work.
@@ -127,7 +125,7 @@ p(x) = \left(\sum_{i=0}^n c_i u_i(x)\right) \cdot \left(\sum_{i=0}^n c_i v_i(x)\
 \noindent Though not exhaustive by any means, these two representations of NP yield a connection between the computation being verified, arithmetic circuit satisfiability, and an instance of polynomial divisibility testing. From this point, the polynomial divisibility check can be verified in a hidden fashion using pairing-based cryptography. This idea is used by virtually all pairing-based methods, with modifications to the constraint system and the polynomial relationship being checked.
 
 \subsection{Polynomial Properties}
-\noindent As mentioned, modern SNARKs reduce proving/verifying statements about computation to polynomial identity/property testing via suitable characterizations of NP. A natural question about this arises: why polynomials over other mathematical objects? The answer in large part lies in how little information one needs to distinguish between two polynomials, which is a consequence of the following lemma.
+\noindent As mentioned, modern SNARKs reduce proving/verifying statements about computation to polynomial identity/property testing via suitable characterizations of NP. The use of polynomials over other mathematical objects is justified by how little information one needs to distinguish between two polynomials, which is a consequence of the following lemma.
 
 \begin{lemma}{Schwarz-Zippel lemma}
 \noindent Let $f(x_1, x_2, \dots x_n) \in R[x_1 \dots x_n]$ be a nonzero polynomial in $n$ variables defined over an integral domain $\mathbb{F}^{n}$. Suppose the element $(a_1, a_2, \dots a_n)$ is selected uniformly at random from a finite subset $S \subset \mathbb{F}^n$. Then 
@@ -136,13 +134,7 @@ $$
 $$
 \end{lemma}
 
-\noindent where $\text{deg}(f)$ is the maximum sum of the degrees of any term's variables. It immediately follows that if $f = g-h$, then for a randomly sampled point $(a_1, \dots a_n) \in \mathbb{F}$, we have
-$$
-\Pr(g(a_1, \dots a_n) = h(a_1, \dots a_n)) \le \frac{deg(g-h)}{|\mathbb{F}|}$$
-
-\noindent In other words, $g$ and $h$ will output different values at $(a_1 \dots a_n)$ with high probability if they are not equal, assuming the $d$ and $\mathbb{F}$ are chosen so that $d \ll |\mathbb{F}|$. Thus, given the right choice of degree and field size, a verifier will still be able to distinguish between two unequal polynomials with high probability using a single evaluation point.\\ 
-
-\noindent Schemes relying on this property can attain shorter proofs, since we need a single evaluation point; faster prover complexity, since we can use ; and faster verification, since checking a polynomial identity can be done quickly via point evaluation without significant soundness loss. Succinct argument systems can make use of this to check polynomial equalities at a single point with little probability of spurious equality.
+\noindent where $\text{deg}(f)$ is the maximum sum of the degrees of any term's variables. It immediately follows that if $f = g-h$, then for a randomly sampled point $(a_1, \dots a_n) \in \mathbb{F}$, we have that $\Pr(g(a_1, \dots a_n) = h(a_1, \dots a_n))$ is bounded from above by $\frac{d}{|\mathbb{F}|}$. In other words, $g$ and $h$ will output different values at $(a_1 \dots a_n)$ with high probability if they are not equal, assuming the $d$ and $\mathbb{F}$ are chosen so that $d \ll |\mathbb{F}|$. Thus, given the right choice of degree and field size, a verifier will still be able to distinguish between two unequal polynomials with high probability using a single evaluation point. Succinct argument systems can make use of this to check polynomial equalities at a single point with small proof size, fast verification, and little probability of spurious equality.
 
 \subsection{Pairing-based Cryptography}
 
@@ -164,25 +156,11 @@ e(G_1, G_2)^{A(\alpha)B(\alpha)} &= e(G_1, G_2)^{C(\alpha)} \\
 where $[A(\alpha)]_1 = A(\alpha)G_1$ (same idea for the other values). So if we can reduce checking circuit satisfiability to checking a polynomial relationship, we can send elliptic curve points as proof elements with which the verifier would perform such a pairing check. The complexity of a naive pairing computation is quasi-quadratic in the target group size, but there are pairing-friendly choices of elliptic curve groups which make this operation faster. 
 
 \subsection{Polynomial commitment schemes (PCS)}
-\noindent A polynomial commitment scheme is a protocol by which a prover claims they know a polynomial $f(x)$ satisfying some relationship, and a verifier checks this claim. A noteworthy example of such a relationship is that $f(y) = z$ for some fixed $y, z$. We detail a noteworthy polynomial commitment scheme for this exact task known as the Kate-Zaverucha-Goldberg commitment scheme (KZG) \cite{kzg}. Suppose $P$ wants to prove they know $f$ of degree $d$ such that $f(\beta) = z$. It follows that $f(X) - z$ is divisible by $(X - \beta)$, so we should be able to construct
-\begin{align}
-h(X) = \frac{f(X) - z}{X - \beta}
-\end{align}
-since we know $f$. $P$ commits to $f$ and $h$ by their hidden evaluations on some $\alpha$ agreed upon in advance by the $P$ and the verifier $V$. In practice, the evaluations are hidden via scalar multiplication by an elliptic curve group generator $g_1 \in \mathbb{G}_1$. This scheme uses two elliptic curve groups for this purpose, so assume the point $g_2$ generates the EC group $\mathbb{G}_2$. Let $[a]_i = ag_i \in \mathbb{G}_i$. Suppose $\mathcal{P}$ and $\mathcal{V}$ agree on a \textit{trusted setup} containing the hidden terms 
-\begin{align}
-\{[1]_1, [\alpha]_1, [\alpha^2]_1, \dots [\alpha^{d}]_1, [1]_2, [\alpha]_2\}
-\end{align}
-
-$P$ sends $[f(\alpha)]_1$ and $[h(\alpha)]_2$. $V$ then sends a challenge point $\gamma$ to which $\mathcal{P}$ responds with $[f(\gamma)]_1$ and $[h(\gamma)]_1$. $V$ then checks that $f(\gamma) - z = h(\gamma)(\gamma - \alpha)$ where $h$ was constructed from the evaluation requirement we wanted to prove that $f$ satisfies. For a bilinear pairing function $e : \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_t$, $\mathcal{V}$ checks that 
+\noindent A polynomial commitment scheme is a protocol by which a prover claims they know a polynomial $f(x)$ satisfying some relationship, and a verifier checks this claim. A noteworthy example of such a relationship is that $f(y) = z$ for some fixed $y, z$. We detail a noteworthy polynomial commitment scheme for this exact task known as the Kate-Zaverucha-Goldberg commitment scheme (KZG) \cite{kzg}. Suppose $P$ wants to prove they know $f$ of degree $d$ such that $f(\beta) = z$. It follows that $f(X) - z$ is divisible by $(X - \beta)$, so we should be able to construct $h(X) = \frac{f(X) - z}{X - \beta}$ since we know $f$. $P$ commits to $f$ and $h$ by their hidden evaluations on some $\alpha$ agreed upon in advance by the $P$ and the verifier $V$. In practice, the evaluations are hidden via scalar multiplication by an elliptic curve group generator $g_1 \in \mathbb{G}_1$. This scheme uses two elliptic curve groups for this purpose, so assume the point $g_2$ generates the EC group $\mathbb{G}_2$. Let $[a]_i = ag_i \in \mathbb{G}_i$. Suppose $\mathcal{P}$ and $\mathcal{V}$ agree on a \textit{trusted setup} containing the hidden terms $\{[1]_1, [\alpha]_1, [\alpha^2]_1, \dots [\alpha^{d}]_1, [1]_2, [\alpha]_2\}$. $P$ sends $[f(\alpha)]_1$ and $[h(\alpha)]_2$. $V$ then sends a challenge point $\gamma$ to which $\mathcal{P}$ responds with $[f(\gamma)]_1$ and $[h(\gamma)]_1$. $V$ then checks that $f(\gamma) - z = h(\gamma)(\gamma - \alpha)$ where $h$ was constructed from the evaluation requirement we wanted to prove that $f$ satisfies. For a bilinear pairing function $e : \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_t$, $\mathcal{V}$ checks that 
 \begin{align}
 &e([f(\gamma) - z]_1, g_2) = e([h(\gamma)]_1, [\gamma]_2 - [\alpha]_2) \\
 &\Leftrightarrow e(g_1, g_2)^{f(\gamma) - z} = e(g_1, g_2)^{h(\gamma)(\gamma - \alpha)} \\
 &\Leftrightarrow  f(\gamma) - z = h(\gamma)(\gamma - \alpha)
 \end{align}
 
-\noindent KZG commitment schemes require constant size communication since the polynomials involved can be collapsed to a point without losing virtually any distinguishability. Given their use of elliptic curve groups to meet this end, their security depends on the hardness of computing elliptic curve discrete logarithms (find $\alpha$ given the points $g$ and $\alpha g$), for which no classical polynomial time algorithm is known \cite{ecdlp}. The drawbacks of using this scheme include the need to generate a trusted setup and the lack of post-quantum security.\\
-
-\noindent There are other general and protocol-specific commitment schemes which check slightly different polynomial relationships than KZG or avoid pairing-based cryptography entirely. But we opt for this example to give an idea of commitment schemes making use of pairings, as this is relevant to many modern pairing-based SNARKs.
-
-\subsection{Turning interactive protocols non-interactive}
- \noindent Interactive pro, without requiring the original prover to remain online. The Fiat-Shamir heuristic provides an elegant solution to transform interactive protocols into non-interactive arguments.
+\noindent KZG commitment schemes require constant size communication since the polynomials involved can be collapsed to a point without losing virtually any distinguishability. Given their use of elliptic curve groups to meet this end, their security depends on the hardness of computing elliptic curve discrete logarithms (find $\alpha$ given the points $g$ and $\alpha g$), for which no classical polynomial time algorithm is known \cite{ecdlp}. The drawbacks of using this scheme include the need to generate a trusted setup and the lack of post-quantum security. Being quite customizable, KZG works with batching, multivariate polynomials, and various optimizations for faster polynomial operations. That said, many methods use different polynomial commitment schemes, some of which avoid pairing-based cryptography entirely. Nonetheless we opt for this example to give an idea of commitment schemes making use of pairings, as this is relevant to many modern pairing-based SNARKs.
