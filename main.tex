@@ -70,12 +70,12 @@
                         
 \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
                        {-6\p@ \@plus -2\p@ \@minus -2\p@}%  % Space before (reduced from -18\p@)
-                       {2\p@ \@plus 2\p@ \@minus 2\p@}%      % Space after (reduced from 8\p@)
+                       {4\p@ \@plus 2\p@ \@minus 2\p@}%      % Space after (reduced from 8\p@)
                        {\normalfont\normalsize\bfseries\boldmath
                         \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
 \renewcommand{\definition}{\@spthm{definition}{\csname definitionname\endcsname}{\bfseries\itshape}{\normalfont}}
 \makeatother
-
+\setlength{\parskip}{0.2ex plus 0.1ex minus 0.1ex}
 \begin{document}
   \small  
   \maketitle
