@@ -1,46 +1,46 @@
 \section{Applications}
 
-\begin{figure}[!t]
-\centering
-\begin{tikzpicture}[
-    level 1/.style={sibling distance=30mm, level distance=8mm},
-    level 2/.style={sibling distance=15mm, level distance=8mm},
-    level 3/.style={sibling distance=7.5mm, level distance=8mm},
-    every node/.style={draw, circle, minimum size=6mm, inner sep=0pt, font=\tiny}
-]
-    % Root node
-    \node {$m_r$}
-        % Level 1
-        child {node[draw=red, line width=0.8pt] {$m_1$}
-            % Level 2
-            child {node {$m_3$}
-                % Level 3
-                child {node {$C_1$}}
-                child {node {$C_2$}}
-            }
-            child {node {$m_4$}
-                % Level 3
-                child {node {$C_3$}}
-                child {node {$C_4$}}
-            }
-        }
-        child {node {$m_2$}
-            % Level 2
-            child {node {$m_5$}
-                % Level 3
-                child {node[draw=red, line width=0.8pt] {$C_5$}}
-                child {node[draw=gray, line width=0.8pt] {$C_6$}}
-            }
-            child {node[draw=red, line width=0.8pt] {$m_6$}
-                % Level 3
-                child {node {$C_7$}}
-                child {node {$C_8$}}
-            }
-        };
-\end{tikzpicture}
-\caption{Merkle tree with authentication path (in red) for deposit commitment $C_6$ (in gray) used by applications like Tornado cash. Here, $C_6$ is recursively hashed with its children all the way to the root. If the computed root matches $m_r$ at deposit time, then the user is allowed to withdraw the amount of funds specified in $C_6$.}
-\label{fig:merkle-tree}
-\end{figure}
+% \begin{figure}[!t]
+% \centering
+% \begin{tikzpicture}[
+%     level 1/.style={sibling distance=30mm, level distance=8mm},
+%     level 2/.style={sibling distance=15mm, level distance=8mm},
+%     level 3/.style={sibling distance=7.5mm, level distance=8mm},
+%     every node/.style={draw, circle, minimum size=6mm, inner sep=0pt, font=\tiny}
+% ]
+%     % Root node
+%     \node {$m_r$}
+%         % Level 1
+%         child {node[draw=red, line width=0.8pt] {$m_1$}
+%             % Level 2
+%             child {node {$m_3$}
+%                 % Level 3
+%                 child {node {$C_1$}}
+%                 child {node {$C_2$}}
+%             }
+%             child {node {$m_4$}
+%                 % Level 3
+%                 child {node {$C_3$}}
+%                 child {node {$C_4$}}
+%             }
+%         }
+%         child {node {$m_2$}
+%             % Level 2
+%             child {node {$m_5$}
+%                 % Level 3
+%                 child {node[draw=red, line width=0.8pt] {$C_5$}}
+%                 child {node[draw=gray, line width=0.8pt] {$C_6$}}
+%             }
+%             child {node[draw=red, line width=0.8pt] {$m_6$}
+%                 % Level 3
+%                 child {node {$C_7$}}
+%                 child {node {$C_8$}}
+%             }
+%         };
+% \end{tikzpicture}
+% \caption{Merkle tree with authentication path (in red) for deposit commitment $C_6$ (in gray) used by applications like Tornado cash. Here, $C_6$ is recursively hashed with its children all the way to the root. If the computed root matches $m_r$ at deposit time, then the user is allowed to withdraw the amount of funds specified in $C_6$.}
+% \label{fig:merkle-tree}
+% \end{figure}
 
 \subsection{Application/Infrastructure-Level Privacy Preservation}
 \noindent Traditional blockchain network innerworkings expose transaction details, making privacy preservation nontrivial at the application/infrastructure layers. Applications like Tornado Cash \cite{tornadocash} partially solve this problem at the application layer, using groth16 proofs to enable privacy-preserving deposits and withdrawals to different wallets without revealing the link between the two. Withdrawing funds involves proving membership of one's deposit record in a Merkle tree; combined with tight EVM smart contract gas limits, the homogeneous nature of this computation makes groth16 a suitable choice. Blockchains like Zerocash \cite{zcash} (privacy-preserving version of Bitcoin \cite{bitcoin}) do a more comprehensive version of this using the unspent transaction output (UTXO) model, where spending funds requires proving knowledge of an ``unspent funds'' record in a Merkle tree. Early versions of Zerocash used groth16 for this, but the NU5 upgrade of 2022 switched to the universal halo2 proof system \cite{halo2}, which enables a combination of a PlonK-style arithmetization and Bulletproofs-style commitment scheme \cite{bulletproofs} requiring no trusted setup at the expense of verifier performance. Both of these examples involve quite homogeneous computation (verifying payments), hence their use of non-universal SNARKs. However, non-universal SNARKs could be used for application-specific privacy-preserving blockchains as well (ex. a blockchain for private trading/lending). Universal SNARKs with ZK properties could enable entire blockchains to prove and verify computation beyond payments without revealing details. 

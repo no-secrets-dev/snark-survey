@@ -70,7 +70,7 @@ snarks_data = {
                 "verifier_time": r"$3 \mathbf{P}$",
                 "universal": "No",
                 "updatable": "No",
-                "assumptions": r"$q$-type, KOE"
+                "assumptions": r"$q$-type, GGM"
             }
         },
         {
