@@ -2,97 +2,113 @@ import json
 import pandas as pd
 from pathlib import Path
 
-# Define SNARK characteristics in JSON format - focusing on pairing-based SNARKs
+# Define column mappings - single source of truth for column names
+COLUMN_MAPPING = {
+    "srs_size": {"display": "CRS size", "format": "l"},
+    "proof_length": {"display": r"proof size", "format": "p{3.2cm}"},
+    "prover_time": {"display": r"$T(\mathcal{P})$", "format": "l"},
+    "verifier_time": {"display": r"$T(\mathcal{V})$", "format": "l"},
+    "universal": {"display": "universal", "format": "c"},
+    "updatable": {"display": "updatable", "format": "c"},
+    "assumptions": {"display": "assumptions", "format": "l"}
+}
+
+# Use internal keys in the data structure
 snarks_data = {
     "snarks": [
         {
             "name": "GGPR13",
             "characteristics": {
-                "SRS size": "$O(n)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 1 \mathbb{F}$",
-                "verifier-time": "$O(n)$",
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$9 \mathbb{G}$",
+                "verifier_time": "$O(n)$",
                 "universal": "No",
                 "updatable": "No",
-                "sec. model": "CRS",
                 "assumptions": "q-PKE, q-PDH"
             }
         },
         {
             "name": "PGHR13",
             "characteristics": {
-                "SRS size": "$O(n)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2$",
-                "verifier-time": "$O(n)$",
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$8 \mathbb{G}$",
+                "verifier_time": "$O(n)$",
                 "universal": "No",
                 "updatable": "No",
-                "sec. model": "CRS",
                 "assumptions": "q-PDH"
             }
         },
         {
             "name": "Groth16",
             "characteristics": {
-                "SRS size": "$O(n)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$2 \mathbb{G}_1 + 1 \mathbb{G}_2$",
-                "verifier-time": "$O(1)$",
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$2 \mathbb{G}_1 + 1 \mathbb{G}_2$",
+                "verifier_time": "$O(\ell)$",
                 "universal": "No",
                 "updatable": "No",
-                "sec. model": "CRS",
-                "assumptions": "q-type"
+                "assumptions": "q-type, KOE"
             }
         },
         {
             "name": "GMKL18",
             "characteristics": {
-                "SRS size": "$O(n^2)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$O(1) \mathbb{G}_1 + O(1) \mathbb{G}_2 + O(1) \mathbb{F}$",
-                "verifier-time": "$O(1)$",
+                "srs_size": "$O(n^2)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$2 \mathbb{G}_1 + 1 \mathbb{G}_2$",
+                "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "sec. model": "CRS",
-                "assumptions": "SXDH"
+                "assumptions": "q-type, KOE"
             }
         },
         {
-            "name": "MBKM19",
+            "name": "MBKM19 (helped)",
             "characteristics": {
-                "SRS size": "$O(n)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$",
-                "verifier-time": "$O(1)$",
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$",
+                "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "sec. model": "CRS",
+                "assumptions": "AGM"
+            }
+        },
+        {
+            "name": "MBKM19 (unhelped)",
+            "characteristics": {
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$",
+                "verifier_time": "$O(1)$",
+                "universal": "Yes",
+                "updatable": "Yes",
                 "assumptions": "SXDH"
             }
         },
         {
             "name": "GWC19",
             "characteristics": {
-                "SRS size": "$O(n)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2$",
-                "verifier-time": "$O(1)$",
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2$",
+                "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "sec. model": "CRS",
                 "assumptions": "SXDH"
             }
         },
         {
             "name": "CHM+19",
             "characteristics": {
-                "SRS size": "$O(n)$",
-                "prover-time": r"$O(n \log n)$",
-                "proof-length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 6 \mathbb{F}$",
-                "verifier-time": "$O(1)$",
+                "srs_size": "$O(n)$",
+                "prover_time": r"$O(n \log n)$",
+                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 6 \mathbb{F}$",
+                "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "sec. model": "CRS",
                 "assumptions": "AGM"
             }
         }
@@ -100,7 +116,7 @@ snarks_data = {
 }
 
 def generate_pairing_snark_table():
-    # Convert JSON to DataFrame format
+    # Convert JSON to DataFrame using internal keys
     rows = []
     for snark in snarks_data["snarks"]:
         row = {"method": snark["name"]}
@@ -108,39 +124,26 @@ def generate_pairing_snark_table():
         rows.append(row)
 
     df = pd.DataFrame(rows)
-
-    # Define the columns to include and their format specification
-    column_formats = {
-        "method": "l",
-        "SRS size": "l",
-        "prover-time": "l",
-        "proof-length": "p{3.2cm}",
-        "verifier-time": "l",
-        "universal": "c",
-        "updatable": "c",
-        "sec. model": "l",
-        "assumptions": "l"
-    }
-
-    # Include only the columns you want to display
-    columns_order = ["method", "SRS size", "prover-time", "proof-length", 
-                     "verifier-time", "universal", "updatable", "assumptions"]
-
-    # Uncomment and modify this line to exclude a column
-    # columns_order.remove("updatable")
-
+    
+    # Rename columns for display using our mapping
+    df.rename(columns={k: v["display"] for k, v in COLUMN_MAPPING.items()}, inplace=True)
+    
+    # Define column order based on mapping (keeps "method" first)
+    columns_order = ["method"] + [v["display"] for k, v in COLUMN_MAPPING.items()]
+    
+    # Filter df to include only specified columns in the right order
     df = df[columns_order]
-
-    # Generate the column format string automatically
-    col_format = "|" + "|".join(column_formats[col] for col in columns_order) + "|"
-
+    
+    # Generate column format string from mapping
+    col_format = "|l|" + "|".join(v["format"] for v in COLUMN_MAPPING.values()) + "|"
+    
     # Generate LaTeX table
     latex = df.to_latex(
         index=False,
         escape=False,
         column_format=col_format,
         caption='Comparison of Pairing-based SNARK Systems',
-        position='H'
+        position='ht'
     )
 
     # Fix the table formatting by adding proper lines
@@ -154,7 +157,7 @@ def generate_pairing_snark_table():
     header_idx = next(i for i, line in enumerate(latex_lines) if '\\\\' in line)
     latex_lines[header_idx] = latex_lines[header_idx].replace('\\\\', '\\\\ \\hline\\toprule')
 
-    # Add midrule after each data row except the last
+    # Add midrule after each data row
     data_rows = [i for i, line in enumerate(latex_lines) if '\\\\' in line and i > header_idx]
     for i in data_rows[:-1]:
         latex_lines[i] = latex_lines[i].replace('\\\\', '\\\\ \\hline')
@@ -162,6 +165,8 @@ def generate_pairing_snark_table():
     # Add bottomrule after the last data row
     if data_rows:
         latex_lines[data_rows[-1]] = latex_lines[data_rows[-1]].replace('\\\\', '\\\\ \\hline\\bottomrule')
+        # Add one more bottomrule for extra emphasis
+        latex_lines.insert(data_rows[-1] + 1, '\\bottomrule')
 
     latex = '\n'.join(latex_lines)
 
@@ -169,7 +174,7 @@ def generate_pairing_snark_table():
     script_dir = Path(__file__).resolve().parent
     project_root = script_dir.parent
 
-    # Write to mainmatter/tables/pairing_snarks.tex
+    # Write to tex_files/snark-table.tex
     output_path = project_root / 'tex_files' / 'snark-table.tex'
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
