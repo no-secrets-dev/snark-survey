@@ -21,8 +21,8 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$9 \mathbb{G}$",
-                "verifier_time": "$O(n)$",
+                "proof_length": r"$9 \mathbb{G}_1$",
+                "verifier_time": r"$O(\ell)$",
                 "universal": "No",
                 "updatable": "No",
                 "assumptions": "q-PKE, q-PDH"
@@ -33,8 +33,8 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$8 \mathbb{G}$",
-                "verifier_time": "$O(n)$",
+                "proof_length": r"$8 \mathbb{G}_1$",
+                "verifier_time": r"$O(\ell)$",
                 "universal": "No",
                 "updatable": "No",
                 "assumptions": "q-PDH"
@@ -45,8 +45,8 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$2 \mathbb{G}_1 + 1 \mathbb{G}_2$",
-                "verifier_time": "$O(\ell)$",
+                "proof_length": r"$2 \mathbb{G}_1, 1 \mathbb{G}_2$",
+                "verifier_time": r"$O(\ell)$",
                 "universal": "No",
                 "updatable": "No",
                 "assumptions": "q-type, KOE"
@@ -57,7 +57,7 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n^2)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$2 \mathbb{G}_1 + 1 \mathbb{G}_2$",
+                "proof_length": r"$2 \mathbb{G}_1, 1 \mathbb{G}_2$",
                 "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
@@ -69,7 +69,7 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$",
+                "proof_length": r"$7 \mathbb{G}_1, 5 \mathbb{F}$",
                 "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
@@ -81,11 +81,11 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$",
+                "proof_length": r"$20 \mathbb{G}_1, 16 \mathbb{F}$",
                 "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "assumptions": "SXDH"
+                "assumptions": "AGM"
             }
         },
         {
@@ -93,11 +93,11 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2$",
+                "proof_length": r"$9 \mathbb{G}_1, 6 \mathbb{F}$",
                 "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "assumptions": "SXDH"
+                "assumptions": "AGM"
             }
         },
         {
@@ -105,7 +105,7 @@ snarks_data = {
             "characteristics": {
                 "srs_size": "$O(n)$",
                 "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 6 \mathbb{F}$",
+                "proof_length": r"$13 \mathbb{G}_1, 8 \mathbb{F}$",
                 "verifier_time": "$O(1)$",
                 "universal": "Yes",
                 "updatable": "Yes",
@@ -143,7 +143,7 @@ def generate_pairing_snark_table():
         escape=False,
         column_format=col_format,
         caption='Comparison of Pairing-based SNARK Systems',
-        position='ht'
+        position='!t'
     )
 
     # Fix the table formatting by adding proper lines

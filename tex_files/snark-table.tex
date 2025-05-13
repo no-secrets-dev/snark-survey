@@ -1,17 +1,19 @@
-\begin{table}[ht]
+\begin{table}[!t]
 \caption{Comparison of Pairing-based SNARK Systems}
-\begin{tabular}{|l|l|l|p{3.2cm}|l|c|c|l|}
+\begin{tabular}{|l|l|p{3.2cm}|l|l|c|c|l|}
 \hline
 \toprule
-method & SRS size & prover-time & proof-length & verifier-time & universal & updatable & assumptions \\ \hline\toprule
+method & CRS size & proof size & $T(\mathcal{P})$ & $T(\mathcal{V})$ & universal & updatable & assumptions \\ \hline\toprule
 \midrule
-GGPR13 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 1 \mathbb{F}$ & $O(n)$ & No & No & q-PKE, q-PDH \\ \hline
-PGHR13 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2$ & $O(n)$ & No & No & q-PDH \\ \hline
-Groth16 & $O(n)$ & $O(n \log n)$ & $2 \mathbb{G}_1 + 1 \mathbb{G}_2$ & $O(1)$ & No & No & q-type \\ \hline
-GMKL18 & $O(n^2)$ & $O(n \log n)$ & $O(1) \mathbb{G}_1 + O(1) \mathbb{G}_2 + O(1) \mathbb{F}$ & $O(1)$ & Yes & Yes & SXDH \\ \hline
-MBKM19 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 5 \mathbb{F}$ & $O(1)$ & Yes & Yes & SXDH \\ \hline
-GWC19 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2$ & $O(1)$ & Yes & Yes & SXDH \\ \hline
-CHM+19 & $O(n)$ & $O(n \log n)$ & $7 \mathbb{G}_1 + 1 \mathbb{G}_2 + 6 \mathbb{F}$ & $O(1)$ & Yes & Yes & AGM \\ \hline\bottomrule
+GGPR13 & $O(n)$ & $9 \mathbb{G}_1$ & $O(n \log n)$ & $O(\ell)$ & No & No & q-PKE, q-PDH \\ \hline
+PGHR13 & $O(n)$ & $8 \mathbb{G}_1$ & $O(n \log n)$ & $O(\ell)$ & No & No & q-PDH \\ \hline
+Groth16 & $O(n)$ & $2 \mathbb{G}_1, 1 \mathbb{G}_2$ & $O(n \log n)$ & $O(\ell)$ & No & No & q-type, KOE \\ \hline
+GMKL18 & $O(n^2)$ & $2 \mathbb{G}_1, 1 \mathbb{G}_2$ & $O(n \log n)$ & $O(1)$ & Yes & Yes & q-type, KOE \\ \hline
+MBKM19 (helped) & $O(n)$ & $7 \mathbb{G}_1, 5 \mathbb{F}$ & $O(n \log n)$ & $O(1)$ & Yes & Yes & AGM \\ \hline
+MBKM19 (unhelped) & $O(n)$ & $20 \mathbb{G}_1, 16 \mathbb{F}$ & $O(n \log n)$ & $O(1)$ & Yes & Yes & AGM \\ \hline
+GWC19 & $O(n)$ & $9 \mathbb{G}_1, 6 \mathbb{F}$ & $O(n \log n)$ & $O(1)$ & Yes & Yes & AGM \\ \hline
+CHM+19 & $O(n)$ & $13 \mathbb{G}_1, 8 \mathbb{F}$ & $O(n \log n)$ & $O(1)$ & Yes & Yes & AGM \\ \hline\bottomrule
+\bottomrule
 \bottomrule
 \end{tabular}
 \end{table}
