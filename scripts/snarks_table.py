@@ -3,11 +3,18 @@ import pandas as pd
 from pathlib import Path
 
 # Define column mappings - single source of truth for column names
+CAPTION_TEXT = """Comparison of work done by pairing-based SNARKs. 
+$n$ represents circuit size; $\ell$ represents public input size; $\mathbb{G}_1$ and 
+$\mathbb{G}_2$ represent group elements; $\mathbb{F}$ represents field elements; $\mathbf{P}$ = pairing operations. 
+In prover/verifier work columns, $\mathbb{G}_i$ and $\mathbb{F}$ refer to elliptic curve group scalar multliplications in $\mathbb{G}_i$ 
+and field element multiplications in $\mathbb{F}$, respectively. An asterisk implies the method is not fully succinct. Where more fine-grained 
+source group is not available, $\mathbb{G}$ implies the elements / operations could be in either source group."""
+
 COLUMN_MAPPING = {
     "srs_size": {"display": "CRS size", "format": "l"},
+    "prover_time": {"display": r"$\mathcal{P}$ work (asymp.)", "format": "l"},
     "proof_length": {"display": r"proof size", "format": "p{3.2cm}"},
-    "prover_time": {"display": r"$T(\mathcal{P})$", "format": "l"},
-    "verifier_time": {"display": r"$T(\mathcal{V})$", "format": "l"},
+    "verifier_time": {"display": r"$\mathcal{V}$ work", "format": "l"},
     "universal": {"display": "universal", "format": "c"},
     "updatable": {"display": "updatable", "format": "c"},
     "assumptions": {"display": "assumptions", "format": "l"}
@@ -19,82 +26,112 @@ snarks_data = {
         {
             "name": "GGPR13",
             "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$9 \mathbb{G}_1$",
+                "srs_size": r"$O(n) \mathbb{G}$",
+                "prover_time": r"$O(n) \mathbb{G}$",
+                "proof_length": r"$9 \mathbb{G}$",
                 "verifier_time": r"$O(\ell)$",
                 "universal": "No",
                 "updatable": "No",
-                "assumptions": "q-PKE, q-PDH"
+                "assumptions": r"q-PKE, q-PDH"
             }
         },
+        # {
+        #     "name": "PGHR13",
+        #     "characteristics": {
+        #         "srs_size": r"$O(n) \mathbb{G}_1 / \mathbb{G}_2$",
+        #         "prover_time": r"$O(n) \mathbb{G}_1 / \mathbb{G}_2$",
+        #         "proof_length": r"$7 \mathbb{G}_1, 2 \mathbb{G}_2$",
+        #         "verifier_time": r"$11 \mathbf{P}$",
+        #         "universal": "No",
+        #         "updatable": "No",
+        #         "assumptions": r"$q$-PKE, $q$-PDH"
+        #     }
+        # },
+
         {
             "name": "PGHR13",
             "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$8 \mathbb{G}_1$",
-                "verifier_time": r"$O(\ell)$",
+                "srs_size": r"$O(n) \mathbb{G}$",
+                "prover_time": r"$O(n) \mathbb{G}$",
+                "proof_length": r"$8 \mathbb{G}$",
+                "verifier_time": r"$11 \mathbf{P}$",
                 "universal": "No",
                 "updatable": "No",
-                "assumptions": "q-PDH"
+                "assumptions": r"$q$-PKE, $q$-PDH"
             }
         },
+
         {
             "name": "Groth16",
             "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
+                "srs_size": r"$9n \mathbb{G}_1, 3n \mathbb{G}_2$",
+                "prover_time": r"$n \mathbb{G}_1$",
                 "proof_length": r"$2 \mathbb{G}_1, 1 \mathbb{G}_2$",
-                "verifier_time": r"$O(\ell)$",
+                "verifier_time": r"$3 \mathbf{P}$",
                 "universal": "No",
                 "updatable": "No",
-                "assumptions": "q-type, KOE"
+                "assumptions": r"$q$-type, KOE"
             }
         },
         {
             "name": "GMKL18",
             "characteristics": {
-                "srs_size": "$O(n^2)$",
-                "prover_time": r"$O(n \log n)$",
+                "srs_size": r"$O(n^2) \mathbb{G}_1 / \mathbb{G}_2$",
+                "prover_time": r"$O(n) \mathbb{G}_1$",
                 "proof_length": r"$2 \mathbb{G}_1, 1 \mathbb{G}_2$",
-                "verifier_time": "$O(1)$",
+                "verifier_time": r"$5 \mathbf{P}$",
                 "universal": "Yes",
                 "updatable": "Yes",
-                "assumptions": "q-type, KOE"
+                "assumptions": r"$q$-type, KOE"
             }
         },
         {
-            "name": "MBKM19 (helped)",
+            "name": "MBKM19",
             "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$7 \mathbb{G}_1, 5 \mathbb{F}$",
-                "verifier_time": "$O(1)$",
-                "universal": "Yes",
-                "updatable": "Yes",
-                "assumptions": "AGM"
-            }
-        },
-        {
-            "name": "MBKM19 (unhelped)",
-            "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
+                "srs_size": r"$36n \mathbb{G}_1$",
+                "prover_time": r"$273n \mathbb{G}_1$",
                 "proof_length": r"$20 \mathbb{G}_1, 16 \mathbb{F}$",
-                "verifier_time": "$O(1)$",
+                "verifier_time": r"$13 \mathbf{P}$",
                 "universal": "Yes",
                 "updatable": "Yes",
                 "assumptions": "AGM"
             }
         },
+
+        {
+            "name": "Gab19*",
+            "characteristics": {
+                "srs_size": r"$2n \mathbb{G}_1$",
+                "prover_time": r"$8n \mathbb{G}_1$",
+                "proof_length": r"$6 \mathbb{G}_1, 4 \mathbb{F}$",
+                "verifier_time": r"$5 \mathbf{P}$",
+                "universal": "Yes",
+                "updatable": "Yes",
+                "assumptions": "AGM"
+            }
+        },
+
         {
             "name": "GWC19",
             "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
-                "proof_length": r"$9 \mathbb{G}_1, 6 \mathbb{F}$",
-                "verifier_time": "$O(1)$",
+                "srs_size": r"$3n \mathbb{G}_1, 2 \mathbb{G}_2$",
+                "prover_time": r"$11n \mathbb{G}_1$",
+                "proof_length": r"$7 \mathbb{G}_1, 6 \mathbb{F}$",
+                "verifier_time": r"$2 \mathbf{P}, 16 \mathbb{G}_1$",
+                "universal": "Yes",
+                "updatable": "Yes",
+                "assumptions": "AGM"
+            }
+        },
+
+
+        {
+            "name": "GW21",
+            "characteristics": {
+                "srs_size": r"$9n \mathbb{G}_1, 2 \mathbb{G}_2$",
+                "prover_time": r"$35n \mathbb{G}_1$",
+                "proof_length": r"$4 \mathbb{G}_1, 15 \mathbb{F}$",
+                "verifier_time": r"$5 \mathbb{G}_1, 2 \mathbf{P}$",
                 "universal": "Yes",
                 "updatable": "Yes",
                 "assumptions": "AGM"
@@ -142,7 +179,8 @@ def generate_pairing_snark_table():
         index=False,
         escape=False,
         column_format=col_format,
-        caption='Comparison of Pairing-based SNARK Systems',
+        caption=CAPTION_TEXT,
+        label=r'tbl:snark',
         position='!t'
     )
 
@@ -167,6 +205,10 @@ def generate_pairing_snark_table():
         latex_lines[data_rows[-1]] = latex_lines[data_rows[-1]].replace('\\\\', '\\\\ \\hline\\bottomrule')
         # Add one more bottomrule for extra emphasis
         latex_lines.insert(data_rows[-1] + 1, '\\bottomrule')
+
+    end_table_idx = next(i for i, line in enumerate(latex_lines) if '\\end{table}' in line)
+    # latex_lines.insert(end_table_idx, r'\captionsetup{' + r'width=.9' + r'\linewidth}')
+    # latex_lines.insert(end_table_idx + 1, r'\caption{' + f'{CAPTION_TEXT}'+ r'}')
 
     latex = '\n'.join(latex_lines)
 
