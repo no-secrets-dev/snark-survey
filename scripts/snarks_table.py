@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 
 # Define column mappings - single source of truth for column names
-CAPTION_TEXT = r"""Comparison of work done by pairing-based SNARKs. 
+CAPTION_TEXT = r"""Comparison of work done by pairing-based (S)NARKs. 
 $n$ represents the number of circuit gates; $\mathbb{G}_1$ and 
 $\mathbb{G}_2$ represent group elements; $\mathbb{F}$ represents field elements; $\mathbf{P}$ represents pairing operations. 
 In prover/verifier work columns, $\mathbb{G}_i$ and $\mathbb{F}$ refer to elliptic curve group scalar multliplications in $\mathbb{G}_i$ 
@@ -65,8 +65,8 @@ snarks_data = {
         {
             "name": "Groth16",
             "characteristics": {
-                "srs_size": r"$9n \mathbb{G}_1, 3n \mathbb{G}_2$",
-                "prover_time": r"$n \mathbb{G}_1$",
+                "srs_size": r"$O(n) \mathbb{G}_1, O(n) \mathbb{G}_2$",
+                "prover_time": r"$O(n) \mathbb{G}_1$",
                 "proof_length": r"$2 \mathbb{G}_1, 1 \mathbb{G}_2$",
                 "verifier_time": r"$3 \mathbf{P}$",
                 "universal": "No",
@@ -75,7 +75,7 @@ snarks_data = {
             }
         },
         {
-            "name": "GMKL18",
+            "name": "GKM+18",
             "characteristics": {
                 "srs_size": r"$O(n^2) \mathbb{G}$",
                 "prover_time": r"$O(n) \mathbb{G}_1$",
@@ -132,7 +132,7 @@ snarks_data = {
                 "srs_size": r"$9n \mathbb{G}_1, 2 \mathbb{G}_2$",
                 "prover_time": r"$35n \mathbb{G}_1$",
                 "proof_length": r"$4 \mathbb{G}_1, 15 \mathbb{F}$",
-                "verifier_time": r"$5 \mathbb{G}_1, 2 \mathbf{P}$",
+                "verifier_time": r"$2 \mathbf{P}, 5 \mathbb{G}_1$",
                 "universal": "Yes",
                 "updatable": "Yes",
                 "assumptions": "AGM"
