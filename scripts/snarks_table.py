@@ -12,7 +12,7 @@ source group information is easily discerned, $\mathbb{G}$ implies the elements 
 Where more fine-grained information is not available or easily comparable in a standardized manner, we resort to asymptotic terms."""
 
 COLUMN_MAPPING = {
-    "srs_size": {"display": "CRS size", "format": "l"},
+    "srs_size": {"display": "CRS size (asymp.)", "format": "l"},
     "prover_time": {"display": r"$\mathcal{P}$ work (asymp.)", "format": "l"},
     "proof_length": {"display": r"proof size", "format": "p{3.2cm}"},
     "verifier_time": {"display": r"$\mathcal{V}$ work", "format": "l"},
