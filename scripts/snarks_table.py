@@ -3,12 +3,13 @@ import pandas as pd
 from pathlib import Path
 
 # Define column mappings - single source of truth for column names
-CAPTION_TEXT = """Comparison of work done by pairing-based SNARKs. 
-$n$ represents circuit size; $\ell$ represents public input size; $\mathbb{G}_1$ and 
-$\mathbb{G}_2$ represent group elements; $\mathbb{F}$ represents field elements; $\mathbf{P}$ = pairing operations. 
+CAPTION_TEXT = r"""Comparison of work done by pairing-based SNARKs. 
+$n$ represents the number of circuit gates; $\mathbb{G}_1$ and 
+$\mathbb{G}_2$ represent group elements; $\mathbb{F}$ represents field elements; $\mathbf{P}$ represents pairing operations. 
 In prover/verifier work columns, $\mathbb{G}_i$ and $\mathbb{F}$ refer to elliptic curve group scalar multliplications in $\mathbb{G}_i$ 
 and field element multiplications in $\mathbb{F}$, respectively. An asterisk implies the method is not fully succinct. Where more fine-grained 
-source group is not available, $\mathbb{G}$ implies the elements / operations could be in either source group."""
+source group information is easily discerned, $\mathbb{G}$ implies the elements / operations could be in either source group.
+Where more fine-grained information is not available or easily comparable in a standardized manner, we resort to asymptotic terms."""
 
 COLUMN_MAPPING = {
     "srs_size": {"display": "CRS size", "format": "l"},
@@ -29,7 +30,7 @@ snarks_data = {
                 "srs_size": r"$O(n) \mathbb{G}$",
                 "prover_time": r"$O(n) \mathbb{G}$",
                 "proof_length": r"$9 \mathbb{G}$",
-                "verifier_time": r"$O(\ell)$",
+                "verifier_time": r"$14 \mathbf{P}$",
                 "universal": "No",
                 "updatable": "No",
                 "assumptions": r"q-PKE, q-PDH"
@@ -76,7 +77,7 @@ snarks_data = {
         {
             "name": "GMKL18",
             "characteristics": {
-                "srs_size": r"$O(n^2) \mathbb{G}_1 / \mathbb{G}_2$",
+                "srs_size": r"$O(n^2) \mathbb{G}$",
                 "prover_time": r"$O(n) \mathbb{G}_1$",
                 "proof_length": r"$2 \mathbb{G}_1, 1 \mathbb{G}_2$",
                 "verifier_time": r"$5 \mathbf{P}$",
@@ -140,10 +141,10 @@ snarks_data = {
         {
             "name": "CHM+19",
             "characteristics": {
-                "srs_size": "$O(n)$",
-                "prover_time": r"$O(n \log n)$",
+                "srs_size": r"$(4n +2) \mathbb{G}_1$",
+                "prover_time": r"$22n \mathbb{G}_1$",
                 "proof_length": r"$13 \mathbb{G}_1, 8 \mathbb{F}$",
-                "verifier_time": "$O(1)$",
+                "verifier_time": r"$2 \mathbf{P}$",
                 "universal": "Yes",
                 "updatable": "Yes",
                 "assumptions": "AGM"

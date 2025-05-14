@@ -1,25 +1,26 @@
 \begin{table}[!t]
 \caption{Comparison of work done by pairing-based SNARKs. 
-$n$ represents circuit size; $\ell$ represents public input size; $\mathbb{G}_1$ and 
-$\mathbb{G}_2$ represent group elements; $\mathbb{F}$ represents field elements; $\mathbf{P}$ = pairing operations. 
+$n$ represents the number of circuit gates; $\mathbb{G}_1$ and 
+$\mathbb{G}_2$ represent group elements; $\mathbb{F}$ represents field elements; $\mathbf{P}$ represents pairing operations. 
 In prover/verifier work columns, $\mathbb{G}_i$ and $\mathbb{F}$ refer to elliptic curve group scalar multliplications in $\mathbb{G}_i$ 
 and field element multiplications in $\mathbb{F}$, respectively. An asterisk implies the method is not fully succinct. Where more fine-grained 
-source group is not available, $\mathbb{G}$ implies the elements / operations could be in either source group.}
+source group information is easily discerned, $\mathbb{G}$ implies the elements / operations could be in either source group.
+Where more fine-grained information is not available or easily comparable in a standardized manner, we resort to asymptotic terms.}
 \label{tbl:snark}
 \begin{tabular}{|l|l|l|p{3.2cm}|l|c|c|l|}
 \hline
 \toprule
 method & CRS size & $\mathcal{P}$ work (asymp.) & proof size & $\mathcal{V}$ work & universal & updatable & assumptions \\ \hline\toprule
 \midrule
-GGPR13 & $O(n) \mathbb{G}$ & $O(n) \mathbb{G}$ & $9 \mathbb{G}$ & $O(\ell)$ & No & No & q-PKE, q-PDH \\ \hline
+GGPR13 & $O(n) \mathbb{G}$ & $O(n) \mathbb{G}$ & $9 \mathbb{G}$ & $14 \mathbf{P}$ & No & No & q-PKE, q-PDH \\ \hline
 PGHR13 & $O(n) \mathbb{G}$ & $O(n) \mathbb{G}$ & $8 \mathbb{G}$ & $11 \mathbf{P}$ & No & No & $q$-PKE, $q$-PDH \\ \hline
 Groth16 & $9n \mathbb{G}_1, 3n \mathbb{G}_2$ & $n \mathbb{G}_1$ & $2 \mathbb{G}_1, 1 \mathbb{G}_2$ & $3 \mathbf{P}$ & No & No & $q$-type, GGM \\ \hline
-GMKL18 & $O(n^2) \mathbb{G}_1 / \mathbb{G}_2$ & $O(n) \mathbb{G}_1$ & $2 \mathbb{G}_1, 1 \mathbb{G}_2$ & $5 \mathbf{P}$ & Yes & Yes & $q$-type, KOE \\ \hline
+GMKL18 & $O(n^2) \mathbb{G}$ & $O(n) \mathbb{G}_1$ & $2 \mathbb{G}_1, 1 \mathbb{G}_2$ & $5 \mathbf{P}$ & Yes & Yes & $q$-type, KOE \\ \hline
 MBKM19 & $36n \mathbb{G}_1$ & $273n \mathbb{G}_1$ & $20 \mathbb{G}_1, 16 \mathbb{F}$ & $13 \mathbf{P}$ & Yes & Yes & AGM \\ \hline
 Gab19* & $2n \mathbb{G}_1$ & $8n \mathbb{G}_1$ & $6 \mathbb{G}_1, 4 \mathbb{F}$ & $5 \mathbf{P}$ & Yes & Yes & AGM \\ \hline
 GWC19 & $3n \mathbb{G}_1, 2 \mathbb{G}_2$ & $11n \mathbb{G}_1$ & $7 \mathbb{G}_1, 6 \mathbb{F}$ & $2 \mathbf{P}, 16 \mathbb{G}_1$ & Yes & Yes & AGM \\ \hline
 GW21 & $9n \mathbb{G}_1, 2 \mathbb{G}_2$ & $35n \mathbb{G}_1$ & $4 \mathbb{G}_1, 15 \mathbb{F}$ & $5 \mathbb{G}_1, 2 \mathbf{P}$ & Yes & Yes & AGM \\ \hline
-CHM+19 & $O(n)$ & $O(n \log n)$ & $13 \mathbb{G}_1, 8 \mathbb{F}$ & $O(1)$ & Yes & Yes & AGM \\ \hline\bottomrule
+CHM+19 & $(4n +2) \mathbb{G}_1$ & $22n \mathbb{G}_1$ & $13 \mathbb{G}_1, 8 \mathbb{F}$ & $2 \mathbf{P}$ & Yes & Yes & AGM \\ \hline\bottomrule
 \bottomrule
 \bottomrule
 \end{tabular}
