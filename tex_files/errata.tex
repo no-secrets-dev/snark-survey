@@ -1,0 +1,11 @@
+\section*{Errata}
+\begin{enumerate}
+    \item In section \ref{subsec:snark}, the fiat-shamir transform was described slightly differently than how the original method is described. Although our description using the previous challenges in the computation of the next likely has similar security properties in the ROM, the original method does not include previous challenges in the computation of following ones, just the previous prover messages. There supposedly are real-world implementations of non-interactive argument systems that use FS as we described it, though.\\
+
+    \item In sections \ref{subsec:early} and \ref{subsec:recipe}, the citations of PCP theorem results by Arora et al. are dated in 1998, even though the first results arose in 1992.\\ 
+
+    \item In section \ref{subsec:early}, the citations of Kilian's construction are dated in 1998, even though the first results arose in 1992. \\
+
+    \item In section \ref{subsec:recipe}, the pairing-based formulations of GGPR verification equations contain one fewer pairing operation than they are supposed to. The equations collectively use 13 pairings, but the original method uses 14 pairings.
+    
+\end{enumerate}
