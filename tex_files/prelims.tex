@@ -5,7 +5,7 @@
 \noindent Prior to giving a more formal SNARK definition, we introduce some notation/conventions used throughout this paper. We let $F_p$ be finite field of prime modulus $p$. We let $\mathbb{G}_i$ denote the multiplicative subgroup over some elliptic curve, where the multiplicative operation in question is an elliptic curve scalar multiplication. We denote by $\lambda$ the security parameter controlling field/group element size and other aspects related to cryptographic hardness. Where it is not explicitly specified, assume $\lambda$ is implicitly passed to algorithms mentioned. We now formally define a SNARK.\\  
 
 \begin{definition}[Succinct Non-Interactive Argument of Knowledge]\label{def:snark}
-    \noindent For $m, n \in \mathbb{N}$ and prime $p$, let $\mathcal{R} \subseteq \mathbb{F}_p^{m} \times \mathbb{F}_p^{n}$ be an NP relation (i.e., decidable in deterministic polynomial time and $|w| = \mathsf{poly}(|x|)\ \forall (x, w) \in \mathcal{R}$). Let $\lambda \in \mathbb{N}$ denote the security parameter. Define the language $L_\mathcal{R} = \{x\ |\ \exists w\ \text{s.t.}\ (x, w) \in \mathcal{R}\}$. A succinct non-interactive argument of knowledge (SNARK) for $\mathcal{R}$ is a tuple of probabilistic polynomial-time algorithms $(\sf{Setup}, \sf{Prove}, \sf{Verify})$ where:
+    \noindent Let $\mathcal{R} \subseteq \mathbb{F}_p^{*} \times \mathbb{F}_p^{*}$ be an NP relation (i.e., decidable in deterministic polynomial time and $|w| = \mathsf{poly}(|x|)\ \forall (x, w) \in \mathcal{R}$). Let $\lambda \in \mathbb{N}$ denote the security parameter. Define the language $L_\mathcal{R} = \{x\ |\ \exists w\ \text{s.t.}\ (x, w) \in \mathcal{R}\}$. A succinct non-interactive argument of knowledge (SNARK) for $\mathcal{R}$ is a tuple of probabilistic polynomial-time algorithms $(\sf{Setup}, \sf{Prove}, \sf{Verify})$ where:
 \begin{itemize}
     \item $\sf{Setup}(1^{\lambda}, \mathcal{R}) \rightarrow \sigma$ outputs a common reference string $\sigma$
     \item $\sf{Prove}(\sigma, x, w) \rightarrow \pi$ outputs a proof $\pi$
@@ -35,7 +35,7 @@
     \end{itemize}
     
     \item \textbf{Non-interactivity:} After setup, the prover sends exactly one message to the verifier.
-    \item \textbf{Computational Zero-Knowledge (optional):} There exists a PPT simulator $\mathcal{S}$ such that for any PPT adversary $\mathcal{A}$, any $(x, w) \in \mathcal{R}$, the following distributions are computationally indistinguishable (denoted by $\approx_c$):
+    \item \textbf{Computational Zero-Knowledge (optional):} There exists a PPT simulator $\mathcal{S}$ such that for any PPT adversary $\mathcal{A}$ and adaptively chosen $(x, w) \in \mathcal{R}$, the following distributions are computationally indistinguishable (denoted by $\approx_c$):
     \begin{align*}
     \left\{ \begin{array}{l}
     (\sigma, \tau) \leftarrow \sf{Setup}(1^{\lambda}, \mathcal{R}); \\
